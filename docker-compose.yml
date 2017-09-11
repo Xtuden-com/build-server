@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  owncloud:
+    image: owncloud/server:${VERSION}
+    links:
+      - db
+    environment:
+      - OWNCLOUD_DOMAIN=${DOMAIN}
+      - OWNCLOUD_DB_TYPE=mysql
+      - OWNCLOUD_DB_NAME=owncloud
+      - OWNCLOUD_DB_USERNAME=owncloud
+      - OWNCLOUD_DB_PASSWORD=owncloud
+      - OWNCLOUD_DB_HOST=db
+      - OWNCLOUD_ADMIN_USERNAME=${ADMIN_USERNAME}
+      - OWNCLOUD_ADMIN_PASSWORD=${ADMIN_PASSWORD}
+    volumes:
+      - ./signingKeys:${HOME}/.owncloud/certificates
+      - .:${PWD}
+
+  db:
+    image: webhippie/mariadb
+    environment:
+      - MARIADB_ROOT_PASSWORD=owncloud
+      - MARIADB_USERNAME=owncloud
+      - MARIADB_PASSWORD=owncloud
+      - MARIADB_DATABASE=owncloud

@@ -1,0 +1,35 @@
+# Buildlist all
+
+# Standard
+# - oAuth2 - missing sign key
+# - notifications - missing sign key
+guests, guests, master, /, standard
+activity, activity, master, /, standard
+oauth2, oauth2, master, /, standard
+files_antivirus, files_antivirus, master, /, standard
+customgroups, customgroups, master, /, standard
+notifications, notifications, master, /, standard
+market, market, master, /, standard
+user_ldap, user_ldap, master, /, standard
+
+# Enterprise
+# - files_ldap_home - needs github repository
+admin_audit, admin_audit, master, /, enterprise
+files_ldap_home, enterprise, master, /files_ldap_home, enterprise
+theme-enterprise, theme-enterprise, master, /, enterprise
+firewall, firewall, master, /, enterprise
+windows_network_drive, windows_network_drive, master, /, enterprise
+systemtags_management, systemtags_management, master, /, enterprise
+sharepoint, sharepoint, master, /, enterprise
+objectstore, objectstore, master, /, enterprise
+enterprise_key, enterprise_key, master, /, enterprise
+password_policy, password_policy, master, /, enterprise
+user_shibboleth, user_shibboleth, master, /, enterprise
+workflow, workflow, master, /, enterprise
+
+# Custom 
+# - files_onedrive
+# - diagnostics
+files_onedrive, files_onedrive, master, /, custom
+diagnostics, diagnostics, master, /, custom
+

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# ./buildApps release-all
+
+channel=$1
+
+IFS=$'\n'
+for build_description in $(cat channels/$channel); do
+
+  #  Handle Comments 
+  [[ ${build_description:0:1} == '#' ]] && echo "$build_description" && continue
+
+  app=$(echo $build_description | awk -F',' '{gsub(" ","", $1); print $1}')
+  repository=$(echo $build_description | awk -F',' '{gsub(" ","", $2); print $2}')
+  branch=$(echo $build_description | awk -F',' '{gsub(" ","", $3); print $3}')
+  # edition=$(echo $build_description | awk -F',' '{gsub(" ","", $4); print $4}')
+
+  echo "--Building $app"
+  ./buildApp $app $repository $branch
+
+  echo
+  echo 
+done
+
+# git branch -d release
+# git checkout -b release
+# git push --set-upstream origin release
+

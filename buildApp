@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# buildApp appname [repository] [branch] 
+
+BUILD=build
+REPO_PATH=repo
+
+app=$1
+repository=${2:-$app}
+branch=${3:-master}
+# edition=${4:-standard}
+
+echo "  fetching $app from $repository:$branch"
+build_path=$BUILD/$branch/$app
+mkdir -p $build_path $REPO_PATH
+
+pushd $REPO_PATH > /dev/null
+[ ! -d $repository ] && git clone "git@github.com:owncloud/$repository.git" 
+pushd $repository > /dev/null
+git checkout $branch
+git pull
+
+echo "  make dist for $app"
+make dist
+
+echo "  Version: $(cat appinfo/info.xml | grep '<version>')"
+echo "  Finished build"
+
+popd > /dev/null
+popd > /dev/null
+
+
+rm -rf $build_path release/$branch/$app release/$branch/$app.tar.gz release/$branch/$app.tar.bz2
+[ -d $REPO_PATH/$repository/build/dist ] || (echo "  ERROR: App was not build, missing dist folder" && exit)
+[ -d $REPO_PATH/$repository/build/dist/$app ] || (echo "  ERROR: App was not build, missing app folder" && exit)
+
+echo "  copy $app to release folder"
+mkdir -p $build_path release/$branch/
+cp -r $REPO_PATH/$repository/build/dist/$app $build_path
+cp -r $REPO_PATH/$repository/build/dist/$app.tar.gz release/$branch/
+cp -r $REPO_PATH/$repository/build/dist/$app.tar.bz2 release/$branch/
+
+# http://download.owncloud.com/internal/apps/$branch/
+echo "  copy $app to internal download mirror"
+ssh root@dl-oc.owncloud.com mkdir -p w/internal/apps/$branch
+scp -r release/$branch/$app.tar.gz root@dl-oc.owncloud.com:w/internal/apps/$branch/
+scp -r release/$branch/$app.tar.bz2 root@dl-oc.owncloud.com:w/internal/apps/$branch/
+
+# http://download.owncloud.com/download/apps/$branch/
+status=$(curl -s -o /dev/null -I -w "%{http_code}" https://github.com/owncloud/$repository)
+if [ "$status" == "200" ]; then
+  echo "  copy $app to public download mirror"
+  ssh root@dl-oc.owncloud.com mkdir -p w/download/apps/$branch
+  scp -r release/$branch/$app.tar.gz root@dl-oc.owncloud.com:w/download/apps/$branch/
+  scp -r release/$branch/$app.tar.bz2 root@dl-oc.owncloud.com:w/download/apps/$branch/
+fi
+
+

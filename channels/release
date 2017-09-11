@@ -1,0 +1,16 @@
+# Release buildlist
+
+# Standard builds
+guests, guests, release
+activity, activity, release
+diagnostics, diagnostics, release
+oauth2, oauth2, release
+
+# Enterprise builds
+firewall, firewall, release
+user_shibboleth, user_shibboleth, release
+password_policy, password_policy, release
+admin_audit, admin_audit, release
+
+# Custom builds
+files_onedrive, files_onedrive, release
